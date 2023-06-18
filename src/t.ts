@@ -1,14 +1,5 @@
 import { resolvePlaceholders } from './resolvePlaceholders';
-
-type ExtractPlaceholders<T extends string> = string extends T
-  ? never
-  : T extends `${infer _Start}{${infer Name}}${infer Rest}`
-  ? Name | ExtractPlaceholders<Rest>
-  : never;
-
-type MaybeValues<List extends string> = [List] extends [never]
-  ? []
-  : [values: { [K in List]: unknown }];
+import { ExtractPlaceholders, MaybeValues } from './types';
 
 /**
  * This function doesn't actually do anything besides a bit of string formatting
