@@ -1,12 +1,10 @@
 {
   "name": "@intl/t",
   "version": "1.0.0",
-  "files": [
-    "index.js",
-    "index.d.ts"
-  ],
-  "main": "index.js",
-  "types": "index.d.ts",
+  "exports": {
+    ".": "./index.js",
+    "./react": "./react.js"
+  },
   "scripts": {
     "typecheck": "tsc --noEmit",
     "lint": "eslint --max-warnings 0 src",
@@ -22,11 +20,13 @@
   "dependencies": {},
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.1",
+    "@types/react": "^18.2.12",
     "eslint": "^8.43.0",
     "eslint-config-xt": "^1.8.0",
     "expect-type": "^0.16.0",
     "lean-package": "^1.4.0",
     "prettier": "^2.8.8",
+    "react": "^18.2.0",
     "rollup": "^2.79.1",
     "rollup-plugin-dts": "^5.3.0",
     "typescript": "~5.0.4",

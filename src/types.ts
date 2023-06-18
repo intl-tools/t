@@ -1,9 +1,21 @@
 export type ExtractPlaceholders<T extends string> = string extends T
   ? never
-  : T extends `${infer _Start}{${infer Name}}${infer Rest}`
+  : T extends `${infer _Pre}{${infer Name}}${infer Rest}`
   ? Name | ExtractPlaceholders<Rest>
   : never;
 
-export type MaybeValues<List extends string> = [List] extends [never]
+type IfEql<T extends string, U extends string> = [T] extends [U] ? T : never;
+
+export type ExtractTags<T extends string> = string extends T
+  ? never
+  : T extends `${infer _Pre}<${infer StartTag}>${infer _Content}</${infer EndTag}>${infer Rest}`
+  ? IfEql<StartTag, EndTag> | ExtractTags<Rest>
+  : never;
+
+export type MaybeParam<O extends Record<string, unknown>> = [keyof O] extends [
+  never,
+]
   ? []
-  : [values: { [K in List]: unknown }];
+  : [values: O];
+
+export type Expand<T> = T extends infer O ? { [K in keyof O]: O[K] } : never;

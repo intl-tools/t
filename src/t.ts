@@ -1,9 +1,9 @@
 import { resolvePlaceholders } from './resolvePlaceholders';
-import { ExtractPlaceholders, MaybeValues } from './types';
+import { ExtractPlaceholders, MaybeParam } from './types';
 
 export type Translate = <S extends string>(
   text: S,
-  ...[values]: MaybeValues<ExtractPlaceholders<S>>
+  ...[values]: MaybeParam<{ [K in ExtractPlaceholders<S>]: unknown }>
 ) => string;
 
 /**

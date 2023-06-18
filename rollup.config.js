@@ -24,4 +24,28 @@ export default [
     },
     plugins: [dts()],
   },
+  {
+    input: 'src/react.tsx',
+    output: {
+      dir: 'build',
+      format: 'cjs',
+      strict: false,
+      esModule: false,
+    },
+    external: ['react'],
+    plugins: [
+      typescript({
+        module: 'esnext',
+      }),
+    ],
+  },
+  {
+    input: 'build/dts/react.d.ts',
+    output: {
+      file: 'build/react.d.ts',
+      format: 'es',
+    },
+    external: ['react'],
+    plugins: [dts()],
+  },
 ];
