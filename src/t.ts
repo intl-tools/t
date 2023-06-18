@@ -1,9 +1,9 @@
 import { resolvePlaceholders } from './resolvePlaceholders';
 
-type ExtractTokens<T extends string> = string extends T
+type ExtractPlaceholders<T extends string> = string extends T
   ? never
   : T extends `${infer _Start}{${infer Name}}${infer Rest}`
-  ? Name | ExtractTokens<Rest>
+  ? Name | ExtractPlaceholders<Rest>
   : never;
 
 type MaybeValues<List extends string> = [List] extends [never]
@@ -18,7 +18,7 @@ type MaybeValues<List extends string> = [List] extends [never]
  */
 export function t<S extends string>(
   text: S,
-  ...[values]: MaybeValues<ExtractTokens<S>>
+  ...[values]: MaybeValues<ExtractPlaceholders<S>>
 ) {
   return values ? resolvePlaceholders(text, values) : text;
 }
