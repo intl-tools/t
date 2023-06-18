@@ -2,10 +2,11 @@
   "name": "@intl/t",
   "version": "0.9.0",
   "files": [
-    "lib"
+    "index.js",
+    "index.d.ts"
   ],
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
     "typecheck": "tsc --noEmit",
     "lint": "eslint --max-warnings 0 src",
@@ -13,9 +14,10 @@
     "format:check": "prettier --check src",
     "unit": "vitest run",
     "test": "yarn typecheck && yarn lint && yarn format:check && yarn unit",
-    "clean": "rm -rf lib coverage",
-    "build": "yarn clean && rollup -c && tsc -p tsconfig.build.json",
-    "prepublishOnly": "yarn build"
+    "clean": "rm -rf build coverage",
+    "copy-files": "cp README.md build/ && lean-package > build/package.json",
+    "build": "yarn clean && tsc -p tsconfig.build.json && rollup -c && rm -rf build/dts && yarn copy-files && prettier --write build",
+    "prepublishOnly": "echo '!! Please use ./publish.sh instead !!' && exit 1"
   },
   "dependencies": {},
   "devDependencies": {
@@ -23,10 +25,10 @@
     "eslint": "^8.43.0",
     "eslint-config-xt": "^1.8.0",
     "expect-type": "^0.16.0",
+    "lean-package": "^1.4.0",
     "prettier": "^2.8.8",
     "rollup": "^2.79.1",
-    "rollup-plugin-prettier": "^3.0.0",
-    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-dts": "^5.3.0",
     "typescript": "~5.0.4",
     "vitest": "^0.32.2"
   },

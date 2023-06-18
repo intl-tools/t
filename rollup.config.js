@@ -1,26 +1,27 @@
 import typescript from '@rollup/plugin-typescript';
-import { terser } from 'rollup-plugin-terser';
-import prettier from 'rollup-plugin-prettier';
+import dts from 'rollup-plugin-dts';
 
-export default {
-  input: 'src/index.ts',
-  output: {
-    dir: 'lib',
-    format: 'cjs',
-    strict: false,
-    esModule: false,
+export default [
+  {
+    input: 'src/index.ts',
+    output: {
+      dir: 'build',
+      format: 'cjs',
+      strict: false,
+      esModule: false,
+    },
+    plugins: [
+      typescript({
+        module: 'esnext',
+      }),
+    ],
   },
-  plugins: [
-    typescript(),
-    terser({
-      format: {
-        comments: false,
-      },
-      compress: false,
-      mangle: false,
-    }),
-    prettier({
-      parser: 'babel',
-    }),
-  ],
-};
+  {
+    input: 'build/dts/index.d.ts',
+    output: {
+      file: 'build/index.d.ts',
+      format: 'es',
+    },
+    plugins: [dts()],
+  },
+];
