@@ -4,9 +4,9 @@ type ExtractTokens<T extends string> = string extends T
   ? Name | ExtractTokens<Rest>
   : never;
 
-type MaybeValues<List> = List extends string
-  ? [values: { [K in List]: unknown }]
-  : [];
+type MaybeValues<List extends string> = [List] extends [never]
+  ? []
+  : [values: { [K in List]: unknown }];
 
 // This matches words inside curly braces.
 const TOKEN = /\{(\w+)\}/g;
