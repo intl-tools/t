@@ -1,4 +1,4 @@
-const TAG = /<(\w+)>(.*?)<\/\1>/g;
+const TAG = /<(.*?)>(.*?)<\/\1>/g;
 
 export function resolveTags<T>(
   input: string,

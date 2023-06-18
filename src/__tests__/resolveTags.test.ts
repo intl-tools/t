@@ -34,6 +34,22 @@ describe('resolveTags', () => {
     expect(result4.join('')).toEqual('Hello [Alice] and {B<Bob}.');
   });
 
+  it('should allow spaces and symbols in tag names', () => {
+    const wrap = (input: string) => input;
+    const result1 = resolveTags(
+      'a <x y>b</x y> c',
+      { 'x y': (content: string) => `[${content}]` },
+      wrap,
+    );
+    expect(result1.join('')).toEqual('a [b] c');
+    const result2 = resolveTags(
+      'a <a|[];\'",./!@#$%^&*()-=_+?b>b</a|[];\'",./!@#$%^&*()-=_+?b> c',
+      { 'a|[];\'",./!@#$%^&*()-=_+?b': (content: string) => `[${content}]` },
+      wrap,
+    );
+    expect(result2.join('')).toEqual('a [b] c');
+  });
+
   it('should allow resolvers and wrap to return non-string', () => {
     type ReactNode = string | { type: string; children: ReactNode };
     const wrap = (input: ReactNode) => ({ type: 'fragment', children: input });
