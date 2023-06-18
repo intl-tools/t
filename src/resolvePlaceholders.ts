@@ -1,8 +1,8 @@
 const PLACEHOLDER = /\{(\w+)\}/g;
 
 /**
- * This function replaces placeholder tokens in a string with the corresponding
- * value from `values` object.
+ * This function accepts a string with placeholder tokens and replaces each with
+ * the corresponding value from `values` object.
  * For example:
  * resolvePlaceholders('Hello {name}', { name: 'Alice' }) // "Hello Alice"
  */
