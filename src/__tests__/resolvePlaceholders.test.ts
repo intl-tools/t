@@ -21,6 +21,21 @@ describe('resolvePlaceholders', () => {
     expect(resolvePlaceholders('Hi {x}', {})).toBe('Hi {x}');
   });
 
+  it('should allow empty placeholders', () => {
+    expect(resolvePlaceholders('Hi {}', { '': 1 })).toBe('Hi 1');
+  });
+
+  it('should allow placeholders with spaces and special characters', () => {
+    expect(resolvePlaceholders('Hi { }.', { ' ': 1 })).toBe('Hi 1.');
+    expect(resolvePlaceholders('Hi {a b}.', { 'a b': 1 })).toBe('Hi 1.');
+    const result = resolvePlaceholders(
+      // prettier-ignore
+      "Hi {a|[];',./!@#$%^&*()-=_+?<>b}.",
+      { "a|[];',./!@#$%^&*()-=_+?<>b": 1 },
+    );
+    expect(result).toBe('Hi 1.');
+  });
+
   it('should ignore extraneous object properties', () => {
     const result = resolvePlaceholders('hello {x}.', { x: 'Yo', y: '_' });
     expect(result).toEqual('hello Yo.');

@@ -1,4 +1,4 @@
-const PLACEHOLDER = /\{(\w+)\}/g;
+const PLACEHOLDER = /\{(.*?)\}/g;
 
 /**
  * This function accepts a string with placeholder tokens and replaces each with
