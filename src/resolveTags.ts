@@ -1,4 +1,4 @@
-const TAG = /<(.*?)>(.*?)<\/\1>/g;
+const TAG = /<(.*?)>(.*?)<\/(.*?)>/g;
 
 export function resolveTags<T>(
   input: string,
@@ -10,15 +10,25 @@ export function resolveTags<T>(
   let index = 0;
   input.replace(
     TAG,
-    (match: string, tagName: string, content: string, i: number) => {
+    (
+      match: string,
+      startTag: string,
+      content: string,
+      endTag: string,
+      i: number,
+    ) => {
       if (i > index) {
         result.push(wrap(input.slice(index, i)));
         index = i;
       }
       index += match.length;
-      const resolver = resolvers[tagName];
-      const node = typeof resolver === 'function' ? resolver(content) : match;
-      result.push(wrap(node));
+      if (startTag === endTag) {
+        const resolver = resolvers[startTag];
+        const node = typeof resolver === 'function' ? resolver(content) : match;
+        result.push(wrap(node));
+      } else {
+        result.push(wrap(match));
+      }
       return match;
     },
   );

@@ -42,31 +42,37 @@ describe('t', () => {
   });
 
   it('should ignore nested tags', () => {
-    // TypeScript can't parse nested tags this so it expects no second param
+    // TypeScript can't parse this (it encounters `<a><b>x</b>`) so it expects no second param
     const result = t('Hello <a><b>x</b></a>');
-    // The runtime impl can parse this but no second param was provided, so it didn't attempt
+    // The runtime impl saw no second param, so it didn't attempt to parse anything
     expect(result).toEqual('Hello <a><b>x</b></a>');
     // @ts-expect-error - If we override TypeScript to provide a second param, we can test the runtime impl
     const result2 = t('Hello <a><b>x</b></a>', { a: (x) => `[${x}]` });
+    // The runtime implementation saw `<a><b>x</b>` as the first match, which is
+    // invalid (start/end tag don't match) so it is inserted as-is
     expect(result2).toEqual(
       <Fragment>
         <Fragment key={0}>{'Hello '}</Fragment>
-        <Fragment key={1}>{'[<b>x</b>]'}</Fragment>
+        <Fragment key={1}>{'<a><b>x</b>'}</Fragment>
+        <Fragment key={2}>{'</a>'}</Fragment>
       </Fragment>,
     );
   });
 
-  it('should ignore invalid tags (at the type level)', () => {
-    // TypeScript doesn't parse invalid tags this so it expects no second param
+  it('should ignore invalid tags', () => {
+    // TypeScript can't parse this (it encounters `<a>x</b>`) so it expects no second param
     const result = t('Hello <a>x</b>y</a>');
-    // The runtime impl can parse this but no second param was provided, so it didn't attempt
+    // The runtime impl saw no second param, so it didn't attempt to parse anything
     expect(result).toEqual('Hello <a>x</b>y</a>');
     // @ts-expect-error - If we override TypeScript to provide a second param, we can test the runtime impl
     const result2 = t('Hello <a>x</b>y</a>', { a: (x) => `[${x}]` });
+    // The runtime implementation saw `<a>x</b>` as the first match, which is
+    // invalid (start/end tag don't match) so it is inserted as-is
     expect(result2).toEqual(
       <Fragment>
         <Fragment key={0}>{'Hello '}</Fragment>
-        <Fragment key={1}>{'[x</b>y]'}</Fragment>
+        <Fragment key={1}>{'<a>x</b>'}</Fragment>
+        <Fragment key={2}>{'y</a>'}</Fragment>
       </Fragment>,
     );
   });
