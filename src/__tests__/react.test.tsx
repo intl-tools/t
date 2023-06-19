@@ -12,6 +12,10 @@ describe('t', () => {
     expect(result).toEqual(
       <Fragment>{[<Fragment key={0}>Hello foo</Fragment>]}</Fragment>,
     );
+    // Allows optional `_` param
+    t('Hello {name}', { name: 'foo', _: () => null });
+    // @ts-expect-error - Does not allow `_` param to be of invalid type
+    t('Hello {name}', { name: 'foo', _: 'x' });
   });
 
   it('should work with tags and placeholders', () => {
@@ -29,6 +33,10 @@ describe('t', () => {
         <Fragment key={1}>[x]</Fragment>
       </Fragment>,
     );
+    // Allows optional `_` param
+    t('Hello <p>{name}</p>', { name: 'x', p: (x) => `[${x}]`, _: () => 'x' });
+    // @ts-expect-error - Does not allow `_` param to be of invalid type
+    t('Hello <p>{name}</p>', { name: 'x', p: (x) => `[${x}]`, _: null });
   });
 
   it('should replace placeholders before parsing tags', () => {
@@ -73,6 +81,40 @@ describe('t', () => {
         <Fragment key={0}>{'Hello '}</Fragment>
         <Fragment key={1}>{'<a>x</b>'}</Fragment>
         <Fragment key={2}>{'y</a>'}</Fragment>
+      </Fragment>,
+    );
+  });
+
+  it('should support fallback resolver', () => {
+    const result = t('Hello <b>x</b>', {
+      b: (x) => <b>{x}</b>,
+      _: (x) => <span>{x}</span>,
+    });
+    expect(result).toEqual(
+      <Fragment>
+        <Fragment key={0}>
+          <span>{'Hello '}</span>
+        </Fragment>
+        <Fragment key={1}>
+          <b>x</b>
+        </Fragment>
+      </Fragment>,
+    );
+  });
+
+  it('should also invoke fallback resolver when named resolver returns string', () => {
+    const result = t('Hello <b>x</b>', {
+      b: (x) => `[${x}]`,
+      _: (x) => <span>{x}</span>,
+    });
+    expect(result).toEqual(
+      <Fragment>
+        <Fragment key={0}>
+          <span>{'Hello '}</span>
+        </Fragment>
+        <Fragment key={1}>
+          <span>[x]</span>
+        </Fragment>
       </Fragment>,
     );
   });

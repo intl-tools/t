@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { describe, it } from 'vitest';
 import { expectTypeOf } from 'expect-type';
 
@@ -95,22 +96,23 @@ describe('ExtractTags', () => {
 });
 
 describe('MaybeParam', () => {
-  it('should return empty tuple for objects without properties', () => {
-    // eslint-disable-next-line @typescript-eslint/ban-types
+  it('should return empty tuple for objects without required properties', () => {
     type Result1 = MaybeParam<{}>;
-    expectTypeOf<Result1>().toEqualTypeOf<[]>();
+    expectTypeOf<Result1>().toEqualTypeOf<[values?: {}]>();
     type Result2 = MaybeParam<{ [K in never]: string }>;
-    expectTypeOf<Result2>().toEqualTypeOf<[]>();
+    expectTypeOf<Result2>().toEqualTypeOf<[values?: {}]>();
     type Result3 = MaybeParam<Record<never, boolean>>;
-    expectTypeOf<Result3>().toEqualTypeOf<[]>();
+    expectTypeOf<Result3>().toEqualTypeOf<[values?: {}]>();
   });
 
   it('should return valid tuple for objects with properties', () => {
     type Result1 = MaybeParam<{ foo: number }>;
     expectTypeOf<Result1>().toEqualTypeOf<[{ foo: number }]>();
-    type Result2 = MaybeParam<{ foo: number; bar: never }>;
-    expectTypeOf<Result2>().toEqualTypeOf<[{ foo: number; bar: never }]>();
-    type Result3 = MaybeParam<Record<string, boolean>>;
-    expectTypeOf<Result3>().toEqualTypeOf<[Record<string, boolean>]>();
+    type Result2 = MaybeParam<{ foo?: number }>;
+    expectTypeOf<Result2>().toEqualTypeOf<[values?: { foo?: number }]>();
+    type Result3 = MaybeParam<{ foo: number; bar: never }>;
+    expectTypeOf<Result3>().toEqualTypeOf<[{ foo: number; bar: never }]>();
+    type Result4 = MaybeParam<Record<string, boolean>>;
+    expectTypeOf<Result4>().toEqualTypeOf<[values?: Record<string, boolean>]>();
   });
 });

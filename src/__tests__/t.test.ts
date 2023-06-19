@@ -6,7 +6,7 @@ describe('t', () => {
   it('should use TS to enforce substitution parameters', () => {
     // @ts-expect-error - Will require a second parameter if necessary
     t('Hello {name}');
-    // @ts-expect-error - Will not allow a second parameter id not necessary
+    // Will allow an empty second parameter
     t('Hello', {});
     // @ts-expect-error - Will not allow extraneous parameters
     t('Hello {name}', { name: 'x', foo: 'y' });

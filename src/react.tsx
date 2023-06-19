@@ -4,9 +4,11 @@ import { resolvePlaceholders } from './resolvePlaceholders';
 import { resolveTags } from './resolveTags';
 import { Expand, ExtractPlaceholders, ExtractTags, MaybeParam } from './types';
 
+type Resolver = (content: string) => ReactNode;
+
 type Parse<S extends string> = Expand<
   Record<ExtractPlaceholders<S>, unknown> &
-    Record<ExtractTags<S>, (content: string) => ReactNode>
+    Record<ExtractTags<S>, Resolver> & { _?: Resolver }
 >;
 
 export type Translate = <S extends string>(
@@ -36,8 +38,17 @@ function resolveAll(input: string, values: Record<string, unknown>) {
  */
 function resolveTagsReact(input: string, resolvers: Record<string, unknown>) {
   let i = 0;
+  // Allow specifying a function to wrap raw text (useful in RN)
+  const wrapText = maybeFn(resolvers._);
+  const wrap = wrapText
+    ? (node: ReactNode) => (typeof node === 'string' ? wrapText(node) : node)
+    : (node: ReactNode) => node;
   const result = resolveTags<ReactNode>(input, resolvers, (node) => (
-    <Fragment key={i++}>{node}</Fragment>
+    <Fragment key={i++}>{wrap(node)}</Fragment>
   ));
   return <>{result}</>;
+}
+
+function maybeFn(input: unknown) {
+  return typeof input === 'function' ? input : undefined;
 }

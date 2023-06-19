@@ -12,10 +12,16 @@ export type ExtractTags<T extends string> = string extends T
   ? IfEql<StartTag, EndTag> | ExtractTags<Rest>
   : never;
 
-export type MaybeParam<O extends Record<string, unknown>> = [keyof O] extends [
-  never,
-]
-  ? []
+type RequiredKeys<T> = {
+  [K in keyof T]-?: NonNullable<unknown> extends Pick<T, K> ? never : K;
+} extends { [_ in keyof T]-?: infer U }
+  ? U
+  : never;
+
+export type MaybeParam<O extends Record<string, unknown>> = [
+  RequiredKeys<O>,
+] extends [never]
+  ? [values?: O]
   : [values: O];
 
 export type Expand<T> = T extends infer O ? { [K in keyof O]: O[K] } : never;
